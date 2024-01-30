@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Button, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const CameraButton = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access camera denied');
+      }
+    })();
+  }, []); // The empty dependency array ensures the effect runs only once when the component mounts.
+
   const openCamera = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== 'granted') {
-      console.log('Permission to access camera roll denied');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.5,
     });
